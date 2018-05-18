@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sdust.im.mapper.SocketMapper">
+  <insert id="saveClientInfo" parameterType="clientInfo">
+    REPLACE INTO clientinfo ( clientid, connected, mostsignbits, leastsignbits,lastconnecteddate)
+    VALUES ( #{clientid, jdbcType=VARCHAR}, #{connected, jdbcType=NUMERIC}, #{mostsignbits, jdbcType=NUMERIC},
+     #{leastsignbits, jdbcType=NUMERIC},#{lastconnecteddate, jdbcType=TIMESTAMP})
+  </insert>
+
+  <select id="findClientInfoByClientid" parameterType="string" resultType="clientInfo">
+    SELECT clientid, connected, mostsignbits, leastsignbits,lastconnecteddate FROM clientinfo
+    WHERE clientid = #{_param, jdbcType=VARCHAR}
+  </select>
+</mapper>

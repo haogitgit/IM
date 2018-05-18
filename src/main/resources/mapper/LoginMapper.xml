@@ -6,7 +6,7 @@
     INSERT INTO TEST VALUES (#{_param, jdbcType=VARCHAR})
   </insert>
 
-  <select id="findUserByAccountId" parameterType="string" resultType="com.sdust.im.domin.dao.User">
+  <select id="findUserByAccountId" parameterType="string" resultType="user">
     SELECT accountId,name,email,birth,phone,province,city,county,sex,password
     FROM USER WHERE accountId = #{_param, jdbcType=VARCHAR}
   </select>
@@ -15,7 +15,7 @@
     SELECT accountId FROM USER ORDER BY id DESC LIMIT 1
   </select>
 
-  <insert id="saveUser" parameterType="com.sdust.im.domin.dao.User">
+  <insert id="saveUser" parameterType="user">
     INSERT INTO USER (accountId,name,email,birth,phone,province,city,county,sex,password)
     VALUES (#{accountId, jdbcType=VARCHAR}, #{name, jdbcType=VARCHAR}, #{email, jdbcType=VARCHAR},
     #{birth, jdbcType=DATE},#{phone, jdbcType=VARCHAR},#{province, jdbcType=VARCHAR},
