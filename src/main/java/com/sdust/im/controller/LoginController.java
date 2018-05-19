@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.session.SessionProperties.Redis;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,6 +46,9 @@ public class LoginController {
         logger.info("用户账号为【{}】，密码为【{}】",accountId , password);
         if(null != accountId && null != password){
             ServerResponse response = loginService.login(user);
+            if (response.isSuccess()){
+                session.setAttribute("isLogin", true);
+            }
             return response;
         }
         return ServerResponse.createByError();
@@ -72,4 +77,16 @@ public class LoginController {
 
         }
     }
+
+    /**
+     * 用户登出
+     * @param id
+     * @return
+     */
+    @RequestMapping("logout/{id}")
+    public ServerResponse logout(@PathVariable(value = "id") String id, HttpSession session){
+        logger.info("本次登出用户id【{}】", id);
+        return ServerResponse.createBySuccess();
+    }
+
 }

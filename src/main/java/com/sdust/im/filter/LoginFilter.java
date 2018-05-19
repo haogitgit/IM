@@ -1,6 +1,8 @@
 package com.sdust.im.filter;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -47,20 +49,23 @@ public class LoginFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
         throws IOException, ServletException {
+        //放行uri的容器
+        Set<String> container = new HashSet<>();
+        container.add("/login");
+        container.add("/register");
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpSession session = request.getSession();
         String uri = request.getRequestURI();
-
         String sessionId = request.getRequestedSessionId();
         if (null == sessionId || "".equals(sessionId)){
-            if (!"/login".equals(uri) && !"/register".equals(uri)){
-                response.sendRedirect("http://localhost:8000/#/login");
+            if (!container.contains(uri)){
+                response.sendRedirect("http://localhost:8000/");
             }
         }else{
             boolean flag = (Boolean) session.getAttribute("isLogin");
             if (!flag){
-                response.sendRedirect("http://localhost:8000/#/login");
+                response.sendRedirect("http://localhost:8000/");
             }
         }
         filterChain.doFilter(servletRequest, servletResponse);
