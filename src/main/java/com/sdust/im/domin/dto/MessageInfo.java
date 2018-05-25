@@ -15,6 +15,8 @@ public class MessageInfo {
     //消息内容
     private String msgContent;
 
+    private String date;
+
     public String getSourceClientId() {
         return sourceClientId;
     }
@@ -38,5 +40,13 @@ public class MessageInfo {
     }
     public void setMsgContent(String msgContent) {
         this.msgContent = msgContent;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

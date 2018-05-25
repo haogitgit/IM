@@ -53,6 +53,9 @@ public class LoginFilter implements Filter {
         Set<String> container = new HashSet<>();
         container.add("/login");
         container.add("/register");
+        container.add("/user/fetch");
+        container.add("/user/searchContact");
+        container.add("/user/deleteContact");
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpSession session = request.getSession();
@@ -63,8 +66,8 @@ public class LoginFilter implements Filter {
                 response.sendRedirect("http://localhost:8000/");
             }
         }else{
-            boolean flag = (Boolean) session.getAttribute("isLogin");
-            if (!flag){
+            Boolean flag = (Boolean) session.getAttribute("isLogin");
+            if (null != flag && !flag){
                 response.sendRedirect("http://localhost:8000/");
             }
         }

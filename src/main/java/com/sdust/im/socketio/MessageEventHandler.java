@@ -84,9 +84,10 @@ public class MessageEventHandler {
             sendData.setTargetClientId(data.getTargetClientId());
             sendData.setMsgType("chat");
             sendData.setMsgContent(data.getMsgContent());
+            sendData.setDate(data.getDate());
             client.sendEvent("messageevent", sendData);
             server.getClient(uuid).sendEvent("messageevent", sendData);
         }
-
+//        client.sendEvent("messageevent", data);
     }
 }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sdust.im.mapper.UserMapper">
+  <select id="findAllContact" resultType="user" parameterType="string">
+    SELECT accountId,name,email,birth,phone,province,city,county,sex from
+    contact LEFT JOIN user on contactId = accountId where userId = #{_param, jdbcType=VARCHAR}
+  </select>
+
+  <select id="searchContact" resultType="user" parameterType="string">
+    SELECT accountId,name,email,birth,phone,province,city,county,sex from USER
+    WHERE accountId = #{_param, jdbcType=VARCHAR}
+  </select>
+
+  <insert id="addContact" parameterType="string">
+    INSERT INTO contact(userId, contactId) VALUES (#{userAccountId, jdbcType=VARCHAR},#{contactAccountId, jdbcType=VARCHAR})
+  </insert>
+
+  <delete id="deleteContact" parameterType="string">
+    DELETE FROM contact where userId = #{userAccountId, jdbcType=VARCHAR} AND
+    contactId = #{contactAccountId, jdbcType=VARCHAR}
+  </delete>
+</mapper>
