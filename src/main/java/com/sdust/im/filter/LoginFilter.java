@@ -53,9 +53,10 @@ public class LoginFilter implements Filter {
         Set<String> container = new HashSet<>();
         container.add("/login");
         container.add("/register");
-        container.add("/user/fetch");
-        container.add("/user/searchContact");
-        container.add("/user/deleteContact");
+//        container.add("/user/fetch");
+//        container.add("/user/searchContact");
+//        container.add("/user/deleteContact");
+//        container.add("/user/updateRemark");
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpSession session = request.getSession();

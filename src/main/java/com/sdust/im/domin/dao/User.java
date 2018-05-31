@@ -31,6 +31,8 @@ public class User {
 
     private List<String> homeplace;
 
+    private String remark;
+
     public List<String> getHomeplace() {
         return homeplace;
     }
@@ -121,5 +123,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }

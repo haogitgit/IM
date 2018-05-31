@@ -3,7 +3,7 @@
 
 <mapper namespace="com.sdust.im.mapper.UserMapper">
   <select id="findAllContact" resultType="user" parameterType="string">
-    SELECT accountId,name,email,birth,phone,province,city,county,sex from
+    SELECT accountId,name,email,birth,phone,province,city,county,sex,remark from
     contact LEFT JOIN user on contactId = accountId where userId = #{_param, jdbcType=VARCHAR}
   </select>
 
@@ -19,5 +19,19 @@
   <delete id="deleteContact" parameterType="string">
     DELETE FROM contact where userId = #{userAccountId, jdbcType=VARCHAR} AND
     contactId = #{contactAccountId, jdbcType=VARCHAR}
-  </delete>
+</delete>
+  
+  <update id="updateRemark" parameterType="userAccount">
+    UPDATE contact SET remark = #{remark, jdbcType=VARCHAR} WHERE
+    userId = #{userAccountId, jdbcType=VARCHAR} AND
+    contactId = #{contactAccountId, jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateInfo" parameterType="user">
+    UPDATE user SET name = #{name, jdbcType=VARCHAR}, email = #{email, jdbcType=VARCHAR},
+    birth = #{birth, jdbcType=DATE},phone = #{phone, jdbcType=VARCHAR},
+    province = #{province, jdbcType=VARCHAR},city = #{city, jdbcType=VARCHAR},
+    county = #{county, jdbcType=VARCHAR},sex = #{sex, jdbcType=VARCHAR}
+    WHERE accountId = #{accountId, jdbcType=VARCHAR}
+  </update>
 </mapper>

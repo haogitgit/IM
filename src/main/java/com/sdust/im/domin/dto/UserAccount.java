@@ -11,6 +11,8 @@ public class UserAccount {
 
     private String contactAccountId;
 
+    private String remark;
+
     public String getUserAccountId() {
         return userAccountId;
     }
@@ -25,5 +27,13 @@ public class UserAccount {
 
     public void setContactAccountId(String contactAccountId) {
         this.contactAccountId = contactAccountId;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }

@@ -38,7 +38,7 @@ public class LoginService {
         if(password.equals(userResult.getPassword())){
             return ServerResponse.createBySuccess(userResult);
         }
-        return ServerResponse.createByError();
+        return ServerResponse.createByErrorMessage("账号或密码错误！");
     }
 
 

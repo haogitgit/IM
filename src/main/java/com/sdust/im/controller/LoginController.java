@@ -4,6 +4,8 @@ import com.sdust.im.common.ServerResponse;
 import com.sdust.im.domin.dao.User;
 import com.sdust.im.service.LoginService;
 import java.util.List;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,17 +43,28 @@ public class LoginController {
      */
     @RequestMapping("login")
     public ServerResponse login(@RequestBody User user, HttpSession session){
+        //判断此账号是否在另一设备登陆
+        String sessionId = session.getId();
         String accountId = user.getAccountId();
+        //获取redis中的sessionid
+        String redisSessionId = (String)redisTemplate.opsForValue().get(accountId);
+        if (null != redisSessionId){
+            if (!sessionId.equals(redisSessionId)){
+                return ServerResponse.createByErrorMessage("已在其他设备登陆，无法重复登陆！");
+            }
+
+        }
         String password = user.getPassword();
         logger.info("用户账号为【{}】，密码为【{}】",accountId , password);
         if(null != accountId && null != password){
             ServerResponse response = loginService.login(user);
             if (response.isSuccess()){
                 session.setAttribute("isLogin", true);
+                redisTemplate.opsForValue().set(accountId, sessionId);
             }
             return response;
         }
-        return ServerResponse.createByError();
+        return ServerResponse.createByErrorMessage("账号或密码错误！");
     }
 
     /**
@@ -73,8 +86,7 @@ public class LoginController {
             ServerResponse response = loginService.register(user);
             return response;
         }else{
-            return ServerResponse.createByError();
-
+            return ServerResponse.createByErrorMessage("服务器错误");
         }
     }
 
@@ -84,8 +96,17 @@ public class LoginController {
      * @return
      */
     @RequestMapping("logout/{id}")
-    public ServerResponse logout(@PathVariable(value = "id") String id, HttpSession session){
+    public ServerResponse logout(@PathVariable(value = "id") String id, HttpSession session,
+        HttpServletResponse response){
         logger.info("本次登出用户id【{}】", id);
+        //将session中islogin置为false
+        session.setAttribute("isLogin", false);
+        //删除redis中的sessionid
+        redisTemplate.delete(id);
+        Cookie cookie = new Cookie("JSESSIONID", "");
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
         return ServerResponse.createBySuccess();
     }
 

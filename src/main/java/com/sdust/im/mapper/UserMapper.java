@@ -6,6 +6,7 @@ package com.sdust.im.mapper;
  */
 
 import com.sdust.im.domin.dao.User;
+import com.sdust.im.domin.dto.UserAccount;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
@@ -40,4 +41,16 @@ public interface UserMapper {
      */
     void deleteContact(@Param("userAccountId") String userAccountId,
         @Param("contactAccountId")String contactAccountId);
+
+    /**
+     * 添加备注
+     * @param userAccount
+     */
+    void updateRemark(UserAccount userAccount);
+
+    /**
+     * 修改资料
+     * @param user
+     */
+    void updateInfo(User user);
 }

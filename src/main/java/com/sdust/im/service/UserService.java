@@ -36,6 +36,12 @@ public class UserService {
         try {
             userList = userMapper.findAllContact(accountId);
             logger.info("账号【{}】所有联系人【{}】", accountId, userList);
+            for (User user: userList) {
+                String remark = user.getRemark();
+                if (null != remark && !"".equals(remark)){
+                    user.setName(remark + "(" + user.getName() + ")");
+                }
+            }
             return ServerResponse.createBySuccess(userList);
         }catch (Exception e){
             logger.error("查询所有联系人错误，错误信息【{}】", e.getStackTrace());
@@ -78,10 +84,11 @@ public class UserService {
                 }
                 return ServerResponse.createByErrorMessage("用户不存在！");
             } catch (Exception e) {
-                return ServerResponse.createByErrorMessage("网络错误！");
+                logger.error("添加联系人错误，错误信息【{}】", e.getStackTrace());
+                return ServerResponse.createByErrorMessage("服务器错误！");
             }
         }else{
-            return ServerResponse.createByErrorMessage("网络错误！");
+            return ServerResponse.createByErrorMessage("服务器错误！");
         }
     }
 
@@ -102,10 +109,55 @@ public class UserService {
                 userMapper.deleteContact(contactAccountId, userAccountId);
                 return ServerResponse.createBySuccessMessage("删除好友成功！");
             }catch (Exception e){
-                return ServerResponse.createByErrorMessage("网络错误！");
+                logger.error("删除联系人错误，错误信息【{}】", e.getStackTrace());
+                return ServerResponse.createByErrorMessage("服务器错误！");
             }
         }else {
-            return ServerResponse.createByErrorMessage("网络错误！");
+            return ServerResponse.createByErrorMessage("服务器错误！");
+        }
+    }
+
+    /**
+     * 添加备注
+     * @param userAccount
+     * @return
+     */
+    public ServerResponse updateRemark(UserAccount userAccount){
+        String userAccountId = userAccount.getUserAccountId();
+        String contactAccountId = userAccount.getContactAccountId();
+        logger.info("账户id【{}】联系人id【{}】", userAccountId, contactAccountId);
+        if (null != userAccountId && !"".equals(userAccountId) &&
+            null != contactAccountId && !"".equals(contactAccountId)){
+            try {
+                userMapper.updateRemark(userAccount);
+                return ServerResponse.createBySuccess();
+            }catch (Exception e){
+                logger.error("添加备注错误，错误信息【{}】", e.getStackTrace());
+                return ServerResponse.createByErrorMessage("服务器错误！");
+            }
+        }else {
+            return ServerResponse.createByErrorMessage("服务器错误！");
+        }
+    }
+
+    /**
+     * 修改资料
+     * @param user
+     * @return
+     */
+    public ServerResponse updateInfo(User user){
+        logger.info("本次修改用户【{}】", user);
+        if (null != user){
+            try {
+                userMapper.updateInfo(user);
+                return ServerResponse.createBySuccess(user);
+            } catch (Exception e) {
+                logger.error("修改资料错误，错误信息【{}】", e.getStackTrace());
+                return ServerResponse.createByErrorMessage("服务器错误！");
+            }
+
+        }else {
+            return ServerResponse.createByErrorMessage("服务器错误！");
         }
     }
 }
