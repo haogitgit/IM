@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sdust.im.mapper.ChatMapper">
+  <select id="getOwnContactOnlineState" parameterType="string" resultType="clientInfo">
+    SELECT clientid,connected from contact
+    LEFT JOIN clientinfo
+    on clientid = contactId
+    WHERE userId = #{_param, jdbcType=VARCHAR}
+  </select>
+</mapper>

@@ -14,7 +14,10 @@ import com.corundumstudio.socketio.annotation.OnEvent;
 import com.sdust.im.domin.dao.ClientInfo;
 import com.sdust.im.domin.dto.MessageInfo;
 import com.sdust.im.mapper.SocketMapper;
+import com.sdust.im.service.ChatService;
 import java.util.Date;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,6 +31,9 @@ public class MessageEventHandler {
     private SocketMapper socketMapper;
 
     @Autowired
+    private ChatService chatService;
+
+    @Autowired
     public MessageEventHandler(SocketIOServer server)
     {
         this.server = server;
@@ -37,6 +43,7 @@ public class MessageEventHandler {
     @OnConnect
     public void onConnect(SocketIOClient client)
     {
+        //修改数据库中的状态
         String clientId = client.getHandshakeData().getSingleUrlParam("clientid");
         ClientInfo clientInfo = new ClientInfo();
         Date nowTime = new Date(System.currentTimeMillis());
@@ -50,7 +57,20 @@ public class MessageEventHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        //给自己发送好友的在线状态
+        Map<String, Boolean> ownContactOnlineState = chatService.getOwnContactOnlineState(clientId);
+        client.sendEvent("onlineState", ownContactOnlineState);
+        //给在线好友发送自己的在线状态
+        Map<String, Map<String, Boolean>> contactContactOnlineState = chatService.getContactContactOnlineState(clientId);
+        for (Entry<String, Map<String, Boolean>> entry : contactContactOnlineState.entrySet()) {
+            String key = entry.getKey();
+            ClientInfo contactClientInfo = socketMapper.findClientInfoByClientid(key);
+            if (contactClientInfo != null )
+            {
+                UUID uuid = new UUID(contactClientInfo.getMostsignbits(), contactClientInfo.getLeastsignbits());
+                server.getClient(uuid).sendEvent("onlineState", entry.getValue());
+            }
+        }
     }
 
     //添加@OnDisconnect事件，客户端断开连接时调用，刷新客户端信息
@@ -66,6 +86,18 @@ public class MessageEventHandler {
             socketMapper.saveClientInfo(clientInfo);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        //给好友发送自己的在线状态
+        Map<String, Map<String, Boolean>> contactContactOnlineState = chatService.getContactContactOnlineState(clientId);
+        for (Entry<String, Map<String, Boolean>> entry : contactContactOnlineState.entrySet()) {
+            String key = entry.getKey();
+            Map<String, Boolean> value = entry.getValue();
+            ClientInfo contactClientInfo = socketMapper.findClientInfoByClientid(key);
+            if (contactClientInfo != null )
+            {
+                UUID uuid = new UUID(contactClientInfo.getMostsignbits(), contactClientInfo.getLeastsignbits());
+                server.getClient(uuid).sendEvent("onlineState", value);
+            }
         }
     }
 

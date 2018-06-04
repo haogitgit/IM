@@ -53,4 +53,11 @@ public interface UserMapper {
      * @param user
      */
     void updateInfo(User user);
+
+    /**
+     * 获取本账户在线联系人
+     * @param accountId
+     * @return
+     */
+    List<User> findOnlineContact(String accountId);
 }

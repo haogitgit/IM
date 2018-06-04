@@ -160,4 +160,21 @@ public class UserService {
             return ServerResponse.createByErrorMessage("服务器错误！");
         }
     }
+
+    /**
+     *获取此账户所有在线联系人
+     * @param accountId
+     * @return
+     */
+    public ServerResponse findOnlineContact(String accountId){
+        List<User> userList = null;
+        try {
+            userList = userMapper.findOnlineContact(accountId);
+            logger.info("账号【{}】所有联系人【{}】", accountId, userList);
+            return ServerResponse.createBySuccess(userList);
+        }catch (Exception e){
+            logger.error("查询所有在线联系人错误，错误信息【{}】", e.getStackTrace());
+            return  ServerResponse.createByError();
+        }
+    }
 }

@@ -34,4 +34,12 @@
     county = #{county, jdbcType=VARCHAR},sex = #{sex, jdbcType=VARCHAR}
     WHERE accountId = #{accountId, jdbcType=VARCHAR}
   </update>
+
+  <select id="findOnlineContact" resultType="user" parameterType="string">
+    SELECT accountId,name,email,birth,phone,province,city,county,sex,remark from
+    (SELECT accountId,name,email,birth,phone,province,city,county,sex,remark
+     FROM contact LEFT JOIN user on contactId = accountId
+     where userId = #{_param, jdbcType=VARCHAR}) a
+    LEFT JOIN clientinfo ON accountId = clientid WHERE connected = '1'
+  </select>
 </mapper>
