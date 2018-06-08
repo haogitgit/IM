@@ -68,7 +68,7 @@ public class LoginFilter implements Filter {
             }
         }else{
             Boolean flag = (Boolean) session.getAttribute("isLogin");
-            if (null != flag && !flag){
+            if (null == flag || !flag){
                 response.sendRedirect("http://localhost:8000/");
             }
         }

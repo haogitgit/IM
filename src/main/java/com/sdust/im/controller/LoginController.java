@@ -42,7 +42,7 @@ public class LoginController {
      * @return
      */
     @RequestMapping("login")
-    public ServerResponse login(@RequestBody User user, HttpSession session){
+    public ServerResponse login(@RequestBody User user, HttpSession session, HttpServletResponse response){
         //判断此账号是否在另一设备登陆
         String sessionId = session.getId();
         String accountId = user.getAccountId();
@@ -57,12 +57,17 @@ public class LoginController {
         String password = user.getPassword();
         logger.info("用户账号为【{}】，密码为【{}】",accountId , password);
         if(null != accountId && null != password){
-            ServerResponse response = loginService.login(user);
-            if (response.isSuccess()){
+            ServerResponse result = loginService.login(user);
+            if (result.isSuccess()){
                 session.setAttribute("isLogin", true);
                 redisTemplate.opsForValue().set(accountId, sessionId);
+            }else{
+                Cookie cookie = new Cookie("JSESSIONID", "");
+                cookie.setPath("/");
+                cookie.setMaxAge(0);
+                response.addCookie(cookie);
             }
-            return response;
+            return result;
         }
         return ServerResponse.createByErrorMessage("账号或密码错误！");
     }
@@ -73,7 +78,7 @@ public class LoginController {
      * @return
      */
     @RequestMapping("register")
-    public ServerResponse register(@RequestBody User user, HttpSession session){
+    public ServerResponse register(@RequestBody User user, HttpServletResponse response){
 
         if(null != user){
             String birth = user.getBirth();
@@ -83,8 +88,12 @@ public class LoginController {
             user.setProvince(homeplace.get(0));
             user.setCity(homeplace.get(1));
             user.setCounty(homeplace.get(2));
-            ServerResponse response = loginService.register(user);
-            return response;
+            ServerResponse result = loginService.register(user);
+            Cookie cookie = new Cookie("JSESSIONID", "");
+            cookie.setPath("/");
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
+            return result;
         }else{
             return ServerResponse.createByErrorMessage("服务器错误");
         }
